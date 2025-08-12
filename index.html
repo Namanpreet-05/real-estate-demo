@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropConnect - Direct Property Deals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .user-toggle {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            background: transparent;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 100px);
+        }
+
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #333, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            color: #666;
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .cta-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input, .search-select {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus, .search-select:focus {
+            outline: none;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .property-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+        }
+
+        .property-info {
+            padding: 2rem;
+        }
+
+        .property-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .property-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .property-details {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            background: #f8f9ff;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .contact-seller {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-seller:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .seller-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .success-message {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .filters-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #666;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .search-input, .search-select {
+                min-width: 100%;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">PropConnect</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link" onclick="showHome()">Home</a>
+                <a href="#" class="nav-link" onclick="switchMode('buyer')">Properties</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+                <div class="user-toggle">
+                    <button class="toggle-btn" onclick="switchMode('buyer')">Buy</button>
+                    <button class="toggle-btn" onclick="switchMode('seller')">Sell</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Home View -->
+        <div id="home-view">
+            <div class="content-area">
+                <div class="hero-section">
+                    <h1 class="hero-title">Find Your Dream Property</h1>
+                    <p class="hero-subtitle">Connect directly with property owners. No brokers, no commission. Save money and time with our direct-to-owner platform.</p>
+                    
+                    <div class="cta-buttons">
+                        <button class="cta-btn cta-primary" onclick="switchMode('buyer')">Find Properties</button>
+                        <button class="cta-btn cta-secondary" onclick="switchMode('seller')">List Your Property</button>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-number">10k+</div>
+                        <div class="stat-label">Properties Listed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5k+</div>
+                        <div class="stat-label">Happy Customers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">₹2Cr+</div>
+                        <div class="stat-label">Brokerage Saved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Cities Covered</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buyer View -->
+        <div id="buyer-view" class="hidden">
+            <div class="content-area">
+                <div class="hero-section">
+                    <h1 class="hero-title">Browse Properties</h1>
+                    <p class="hero-subtitle">Find your perfect home from thousands of verified listings</p>
+                </div>
+
+                <div class="filters-section">
+                    <h3 class="filter-title">Search Properties</h3>
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Enter city or area" id="locationSearch">
+                        <select class="search-select" id="propertyType">
+                            <option value="">Property Type</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="house">Independent House</option>
+                            <option value="villa">Villa</option>
+                            <option value="plot">Plot/Land</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                        <select class="search-select" id="priceRange">
+                            <option value="">Budget</option>
+                            <option value="0-25">Under ₹25L</option>
+                            <option value="25-50">₹25L - ₹50L</option>
+                            <option value="50-100">₹50L - ₹1Cr</option>
+                            <option value="100-200">₹1Cr - ₹2Cr</option>
+                            <option value="200+">₹2Cr+</option>
+                        </select>
+                        <select class="search-select" id="bedroomFilter">
+                            <option value="">Bedrooms</option>
+                            <option value="1">1 BHK</option>
+                            <option value="2">2 BHK</option>
+                            <option value="3">3 BHK</option>
+                            <option value="4">4 BHK</option>
+                            <option value="5+">5+ BHK</option>
+                        </select>
+                        <button class="search-btn" onclick="searchProperties()">🔍 Search</button>
+                    </div>
+                </div>
+
+                <div class="property-grid" id="propertyGrid">
+                    <!-- Property listings will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Seller View -->
+        <div id="seller-view" class="hidden">
+            <div class="content-area">
+                <div class="hero-section">
+                    <h1 class="hero-title">List Your Property</h1>
+                    <p class="hero-subtitle">Reach thousands of genuine buyers directly. No commission, maximum exposure.</p>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    🎉 Your property has been listed successfully! It will be reviewed and published within 24 hours.
+                </div>
+
+                <form class="seller-form" onsubmit="submitProperty(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Property Title *</label>
+                            <input type="text" class="form-input" name="title" required placeholder="e.g., 3BHK Apartment in Koramangala">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Property Type *</label>
+                            <select class="form-select" name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="house">Independent House</option>
+                                <option value="villa">Villa</option>
+                                <option value="plot">Plot/Land</option>
+                                <option value="commercial">Commercial Space</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City *</label>
+                            <input type="text" class="form-input" name="city" required placeholder="e.g., Bangalore">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Area/Locality *</label>
+                            <input type="text" class="form-input" name="area" required placeholder="e.g., Koramangala 4th Block">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Price (₹) *</label>
+                            <input type="number" class="form-input" name="price" required placeholder="5000000">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Area (sq ft) *</label>
+                            <input type="number" class="form-input" name="area_sqft" required placeholder="1200">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Bedrooms</label>
+                            <select class="form-select" name="bedrooms">
+                                <option value="">Select</option>
+                                <option value="1">1 BHK</option>
+                                <option value="2">2 BHK</option>
+                                <option value="3">3 BHK</option>
+                                <option value="4">4 BHK</option>
+                                <option value="5+">5+ BHK</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Bathrooms</label>
+                            <select class="form-select" name="bathrooms">
+                                <option value="">Select</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5+">5+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Furnishing Status</label>
+                            <select class="form-select" name="furnishing">
+                                <option value="">Select</option>
+                                <option value="unfurnished">Unfurnished</option>
+                                <option value="semi-furnished">Semi-Furnished</option>
+                                <option value="fully-furnished">Fully Furnished</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Property Age</label>
+                            <select class="form-select" name="age">
+                                <option value="">Select</option>
+                                <option value="new">Under Construction</option>
+                                <option value="0-1">0-1 Years</option>
+                                <option value="1-5">1-5 Years</option>
+                                <option value="5-10">5-10 Years</option>
+                                <option value="10+">10+ Years</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Property Description *</label>
+                        <textarea class="form-textarea" name="description" required placeholder="Describe your property, amenities, nearby facilities, unique features..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Owner Name *</label>
+                            <input type="text" class="form-input" name="owner_name" required placeholder="Your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Contact Number *</label>
+                            <input type="tel" class="form-input" name="phone" required placeholder="+91 9876543210">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-input" name="email" required placeholder="your.email@example.com">
+                    </div>
+
+                    <button type="submit" class="submit-btn">📋 List My Property</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>PropConnect</h3>
+                <p>India's leading no-brokerage property platform. Connect directly with property owners and save on commission fees.</p>
+            </div>
+            <div class="footer-section">
+                <h3>For Buyers</h3>
+                <p><a href="#">Search Properties</a></p>
+                <p><a href="#">Price Trends</a></p>
+                <p><a href="#">Area Guides</a></p>
+                <p><a href="#">Home Loans</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>For Sellers</h3>
+                <p><a href="#">List Property</a></p>
+                <p><a href="#">Pricing Guide</a></p>
+                <p><a href="#">Seller Tips</a></p>
+                <p><a href="#">Legal Help</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <p><a href="#">Help Center</a></p>
+                <p><a href="#">Contact Us</a></p>
+                <p><a href="#">Terms & Conditions</a></p>
+                <p><a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentMode = 'home';
+        let properties = [
+            {
+                id: 1,
+                title: "Luxury 3BHK Apartment in Koramangala",
+                price: "₹1.2 Cr",
+                priceNum: 120,
+                location: "Koramangala 4th Block, Bangalore",
+                area: "1450 sq ft",
+                bedrooms: "3",
+                bathrooms: "2",
+                type: "apartment",
+                furnishing: "Semi-Furnished",
+                contact: "+91 9876543214",
+                features: ["Balcony", "Parking", "Gym"],
+                badge: "Budget"
+            },
+            {
+                id: 6,
+                title: "Premium Villa with Swimming Pool",
+                price: "₹3.2 Cr",
+                priceNum: 320,
+                location: "Sarjapur Road, Bangalore",
+                area: "2800 sq ft",
+                bedrooms: "4",
+                bathrooms: "4",
+                type: "villa",
+                furnishing: "Fully Furnished",
+                contact: "+91 9876543215",
+                features: ["Swimming Pool", "Garden", "Parking", "Security", "Gym"],
+                badge: "Luxury"
+            }
+        ];
+
+        function showHome() {
+            currentMode = 'home';
+            document.getElementById('home-view').classList.remove('hidden');
+            document.getElementById('buyer-view').classList.add('hidden');
+            document.getElementById('seller-view').classList.add('hidden');
+            
+            // Reset toggle buttons
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            toggleBtns.forEach(btn => btn.classList.remove('active'));
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const homeView = document.getElementById('home-view');
+            const buyerView = document.getElementById('buyer-view');
+            const sellerView = document.getElementById('seller-view');
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+            // Reset all views
+            homeView.classList.add('hidden');
+            buyerView.classList.add('hidden');
+            sellerView.classList.add('hidden');
+            
+            // Reset toggle buttons
+            toggleBtns.forEach(btn => btn.classList.remove('active'));
+
+            if (mode === 'buyer') {
+                buyerView.classList.remove('hidden');
+                toggleBtns[0].classList.add('active');
+                displayProperties(properties);
+            } else if (mode === 'seller') {
+                sellerView.classList.remove('hidden');
+                toggleBtns[1].classList.add('active');
+            }
+        }
+
+        function displayProperties(propertiesToShow) {
+            const grid = document.getElementById('propertyGrid');
+            grid.innerHTML = '';
+
+            if (propertiesToShow.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #666;">
+                        <h3>No properties found</h3>
+                        <p>Try adjusting your search filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            propertiesToShow.forEach(property => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.onclick = () => openPropertyDetails(property);
+                
+                const featuresHtml = property.features.map(feature => 
+                    `<span class="feature">${feature}</span>`
+                ).join('');
+
+                card.innerHTML = `
+                    <div class="property-badge">${property.badge}</div>
+                    <div class="property-image">🏠</div>
+                    <div class="property-info">
+                        <div class="property-price">${property.price}</div>
+                        <div class="property-title">${property.title}</div>
+                        <div class="property-details">
+                            📍 ${property.location}<br>
+                            📐 ${property.area} | 🛏️ ${property.bedrooms} BHK | 🚿 ${property.bathrooms} Bath<br>
+                            🏠 ${property.furnishing}
+                        </div>
+                        <div class="property-features">
+                            ${featuresHtml}
+                        </div>
+                        <button class="contact-seller" onclick="event.stopPropagation(); contactSeller('${property.contact}', '${property.title}')">
+                            📞 Contact Owner
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function searchProperties() {
+            const location = document.getElementById('locationSearch').value.toLowerCase();
+            const type = document.getElementById('propertyType').value;
+            const priceRange = document.getElementById('priceRange').value;
+            const bedrooms = document.getElementById('bedroomFilter').value;
+
+            let filtered = properties.filter(property => {
+                const matchLocation = !location || property.location.toLowerCase().includes(location);
+                const matchType = !type || property.type === type;
+                const matchBedrooms = !bedrooms || property.bedrooms === bedrooms;
+                
+                let matchPrice = true;
+                if (priceRange) {
+                    const [min, max] = priceRange.split('-').map(p => p.replace('+', ''));
+                    const minPrice = parseInt(min);
+                    const maxPrice = max ? parseInt(max) : Infinity;
+                    matchPrice = property.priceNum >= minPrice && property.priceNum <= maxPrice;
+                }
+                
+                return matchLocation && matchType && matchBedrooms && matchPrice;
+            });
+
+            displayProperties(filtered);
+        }
+
+        function contactSeller(contact, title) {
+            alert(`Contact Details:\n\nPhone: ${contact}\nProperty: ${title}\n\nYou can now call or message the owner directly!`);
+        }
+
+        function openPropertyDetails(property) {
+            alert(`Property Details:\n\n${property.title}\nPrice: ${property.price}\nLocation: ${property.location}\nArea: ${property.area}\nFeatures: ${property.features.join(', ')}\n\nContact: ${property.contact}`);
+        }
+
+        function submitProperty(event) {
+            event.preventDefault();
+            
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            
+            // Scroll to success message
+            successMessage.scrollIntoView({ behavior: 'smooth' });
+            
+            // Reset form
+            event.target.reset();
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            showHome();
+        });
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stats on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.style.transform = 'translateY(30px)';
+                card.style.opacity = '0';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
